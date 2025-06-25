@@ -17,7 +17,7 @@ public class SurveyResponse {
     private User user;
 
     @ElementCollection
-    private Map<String, String> answers; // 질문 응답 (예: {"Q1": "a", "Q2": "b"})
+    private Map<String, String> answers;
 
-    private String sbti; // 계산된 학습 성향
+    private String sbti;
 }

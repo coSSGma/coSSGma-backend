@@ -28,7 +28,7 @@ public class SurveyService {
             "FLEXIBLE_NIGHT_OWL"
     };
 
-    // 가중치 표 (Python 코드에서 가져옴)
+    // 가중치 표
     private static final Map<Integer, Map<String, double[]>> WEIGHTS = new HashMap<>();
 
     static {
@@ -132,11 +132,35 @@ public class SurveyService {
         user.setSbti(sbti);
         userRepository.save(user);
 
+        // SBTIType에서 정보 조회
+        SBTIType sbtiType = SBTIType.fromCode(sbti);
+
         // 결과 반환
-        SurveyResultDTO result = new SurveyResultDTO();
-        result.setUserId(user.getId());
-        result.setSbti(sbti);
-        return result;
+        return new SurveyResultDTO(
+                user.getId(),
+                sbtiType.getName(),
+                sbtiType.getTrait(),
+                sbtiType.getMatch()
+        );
+    }
+
+    public SurveyResultDTO getSurveyResult(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getSbti() == null) {
+            return null;
+        }
+
+        // SBTIType에서 정보 조회
+        SBTIType sbtiType = SBTIType.fromCode(user.getSbti());
+
+        return new SurveyResultDTO(
+                userId,
+                sbtiType.getName(),
+                sbtiType.getTrait(),
+                sbtiType.getMatch()
+        );
     }
 
     private String predictSbti(List<String> answers) {
@@ -158,12 +182,5 @@ public class SurveyService {
         }
 
         return SBTI_TYPES[maxIndex];
-    }
-
-    public SurveyResultDTO getSurveyResult(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        return new SurveyResultDTO(userId, user.getSbti());
     }
 }

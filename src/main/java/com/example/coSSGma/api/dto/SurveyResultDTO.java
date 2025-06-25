@@ -8,8 +8,6 @@ import lombok.Data;
 public class SurveyResultDTO {
     private Long userId;
     private String sbti;
-
-    public SurveyResultDTO() {
-
-    }
+    private String trait;
+    private String match;
 }
